@@ -11,7 +11,7 @@ const stats = [
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-24 px-8">
+    <section className="py-24 px-4 sm:px-8">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-start gap-16">
         <div className="flex flex-col gap-8 lg:max-w-sm w-full lg:sticky lg:top-24">
           <div className="flex items-center gap-2 px-5 py-2 rounded-full bg-purple-950/40 backdrop-blur-md border border-purple-500/40 w-fit">
@@ -22,9 +22,9 @@ const WhyChooseUs = () => {
           </div>
 
           <div className="flex flex-col gap-3">
-            <h2 className="text-5xl font-bold text-slate-100 leading-tight">
+            <h2 className="text-4xl sm:text-5xl font-bold text-slate-100 leading-tight">
               Built for{" "}
-              <span className="bg-gradient-to-br from-purple-800 via-purple-700 to-blue-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-tr from-purple-800 via-purple-700 to-fuchsia-600 bg-clip-text text-transparent">
                 Real Results
               </span>
             </h2>
