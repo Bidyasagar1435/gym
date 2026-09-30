@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { ArrowLeft, Dumbbell, CircleCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  Dumbbell,
+  CircleCheck,
+  Heart,
+  HeartPulse,
+} from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToFavorite,
+  removeFromFavorite,
+} from "@/redux/slices/favoritesSlice";
 
 const ExerciseDetails = () => {
   const [loading, setLoading] = useState(true);
@@ -8,6 +19,21 @@ const ExerciseDetails = () => {
   const [exercise, setExercise] = useState(null);
 
   const { name } = useParams();
+
+  const favoriteExercise = useSelector((state) => state.favorites.data);
+  const dispatch = useDispatch();
+
+  const isFavorite = favoriteExercise.some(
+    (item) => item.name === exercise.name,
+  );
+
+  const toggleFavorite = () => {
+    if (!isFavorite) {
+      dispatch(addToFavorite(exercise));
+    } else {
+      dispatch(removeFromFavorite(exercise.name));
+    }
+  };
 
   useEffect(() => {
     const getExerciseDetails = async () => {
@@ -31,7 +57,6 @@ const ExerciseDetails = () => {
         }
 
         const data = await res.json();
-        console.log(data);
 
         if (data.length === 0) {
           throw new Error("Exercise not found");
@@ -52,10 +77,12 @@ const ExerciseDetails = () => {
   /* Loading */
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-4">
-        <div className="w-14 h-14 rounded-full border-4 border-purple-600 border-t-transparent animate-spin" />
-
-        <p className="text-slate-400 text-sm tracking-wide">
+      <div className="flex flex-col items-center justify-center py-24 gap-5 text-center">
+        <div className="relative w-16 h-16">
+          <div className="absolute inset-0 rounded-full border-4 border-slate-800" />
+          <div className="absolute inset-0 rounded-full border-4 border-t-purple-500 border-r-fuchsia-500 border-b-transparent border-l-transparent animate-spin" />
+        </div>
+        <p className="text-slate-400 text-sm font-semibold tracking-widest uppercase animate-pulse">
           Loading exercise details...
         </p>
       </div>
@@ -82,19 +109,28 @@ const ExerciseDetails = () => {
   return (
     <section className="min-h-screen bg-slate-950 px-4 sm:px-6 md:px-8 py-10">
       <div className="max-w-5xl mx-auto">
-        
-        <Link
-          to="/exercises"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-700 text-slate-400 text-sm hover:border-purple-500 hover:text-white hover:bg-purple-800/10 transition-all duration-500 cursor-pointer mb-2"
-        >
-          <ArrowLeft size={18} />
-          Back to Exercises
-        </Link>
+        <div className="flex items-center gap-3 mb-2">
+          <Link
+            to="/exercises"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-700 text-slate-400 text-sm hover:border-purple-500 hover:text-white hover:bg-purple-800/10 transition-all duration-500 cursor-pointer"
+          >
+            <ArrowLeft size={18} />
+            Back to Exercises
+          </Link>
+
+          <Link
+            to="/favorite-exercises"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-400 text-sm hover:border-fuchsia-400 hover:bg-fuchsia-500/20 hover:text-fuchsia-300 transition-all duration-500 cursor-pointer"
+          >
+            <HeartPulse size={18} />
+            View Favourites
+          </Link>
+        </div>
 
         {exercise && (
           <div className="rounded-2xl border border-slate-800 bg-slate-900/70 overflow-hidden">
             {/* Header */}
-            <div className="p-6 sm:p-8 md:p-10 border-b border-slate-800">
+            <div className="p-6 sm:p-8 md:p-10 border-b border-slate-800 relative">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-11 h-11 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
                   <Dumbbell className="text-cyan-400" size={22} />
@@ -105,9 +141,21 @@ const ExerciseDetails = () => {
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white capitalize">
-                {exercise.name}
-              </h1>
+              <div className="flex items-start justify-between gap-4">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white capitalize">
+                  {exercise.name}
+                </h1>
+
+                <button
+                  onClick={toggleFavorite}
+                  className="mt-1 flex-shrink-0 p-3 rounded-full border border-slate-700 bg-slate-800/60 text-slate-400 hover:border-fuchsia-500/60 hover:bg-fuchsia-500/10 hover:text-fuchsia-400 transition-all duration-300"
+                >
+                  <Heart
+                    size={22}
+                    className={`${isFavorite ? "fill-purple-500 text-purple-500" : "text-white/50 hover:text-gray-200"}`}
+                  />
+                </button>
+              </div>
 
               <p className="mt-4 text-slate-400">
                 Complete exercise information, equipment and instructions.

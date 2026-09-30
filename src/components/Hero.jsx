@@ -2,8 +2,21 @@ import React from "react";
 import { Button } from "./ui/button";
 import { Flame } from "lucide-react";
 import Background from "./Background";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const navigate = useNavigate();
+
+  const handleStartWorkout = () => {
+    if (!isLoggedIn) {
+      navigate("/login");
+    } else {
+      navigate("/dashboard/workout");
+    }
+  };
+
   return (
     <div className="relative w-full h-screen overflow-hidden mt-6">
       <Background />
@@ -32,7 +45,9 @@ const Hero = () => {
         </p>
 
         <div className="flex items-center gap-3 mt-2">
-          <Button variant="primary">Start Now</Button>
+          <Button onClick={handleStartWorkout} variant="primary">
+            Start Now
+          </Button>
           <Button variant="outline">Explore Programs</Button>
         </div>
 

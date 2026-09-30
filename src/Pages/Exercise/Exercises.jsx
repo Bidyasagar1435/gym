@@ -1,13 +1,8 @@
+import { addToFavorite } from "@/redux/slices/favoritesSlice";
 import { getExercises } from "@/services/exerciseApi";
-import {
-  Dumbbell,
-  ArrowRight,
-  ArrowLeft,
-  Search,
-  GalleryThumbnails,
-  Heart,
-} from "lucide-react";
+import { Dumbbell, ArrowRight, ArrowLeft, Heart } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 const Exercises = () => {
@@ -19,6 +14,10 @@ const Exercises = () => {
   const [selectedType, setSelectedType] = useState("All");
   const [selectedMuscle, setSelectedMuscle] = useState("All");
   const [search, setSearch] = useState("");
+
+  const favoriteExercise = useSelector((state) => state.favorites.data);
+  const dispatch = useDispatch();
+  const totalExercise = favoriteExercise.length;
 
   const handleFilterChange = (value, type) => {
     switch (type) {
@@ -128,12 +127,21 @@ const Exercises = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 min-w-0 px-3 sm:px-4 py-2 rounded-lg border border-slate-700 bg-slate-900 text-white text-sm sm:text-base focus:outline-none focus:ring-1 focus:ring-purple-500"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2 rounded-lg border border-slate-700 bg-slate-900 text-white text-sm sm:text-base focus:outline-none focus:ring-1 focus:ring-purple-600"
               placeholder="Search exercises..."
             />
-            <button className="shrink-0 p-2 rounded-full border border-slate-700 bg-slate-900 text-white hover:border-purple-500 transition-colors duration-200">
-              <Search className="text-white" size={18} />
-            </button>
+            <Link to="/favorite-exercises" className="relative shrink-0">
+              <button className="p-2 rounded-full border border-slate-700 bg-slate-900 text-white hover:border-purple-500 transition-colors duration-200">
+                <Heart
+                  size={18}
+                  className="text-white/50 hover:text-gray-200 "
+                />
+              </button>
+              {/* Favorite count badge */}
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-gradient-to-tr from-purple-600 to-fuchsia-500 text-white text-[10px] font-bold leading-none shadow-md shadow-purple-500/40 ring-1 ring-slate-900 pointer-events-none">
+                {totalExercise}
+              </span>
+            </Link>
           </div>
           {/* Muscle Filter */}
           <div className="w-full">
@@ -240,6 +248,9 @@ const Exercises = () => {
 
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 mt-4 sm:mt-6">
           {filteredExercises.map((exercise, index) => {
+            const isFavorite = favoriteExercise.some(
+              (item) => item.name === exercise.name,
+            );
             const total = filteredExercises.length;
             const isLast = index === total - 1;
             const loneOnLg = isLast && total % 3 === 1;
@@ -274,8 +285,20 @@ const Exercises = () => {
                       Target Muscle: {exercise.muscle}
                     </p>
                   </div>
-                  <div className="bg-white/5 p-2 rounded-full hover:border hover:border-gray-700 transition-all duration-300">
-                    <Heart size={18} className="text-white/50 hover:text-gray-200 "/>
+                  <div>
+                    <button
+                      onClick={() => dispatch(addToFavorite(exercise))}
+                      className="shrink-0 p-2 rounded-full border border-slate-700 bg-slate-900 text-white hover:border-purple-500 transition-colors duration-400"
+                    >
+                      <Heart
+                        size={18}
+                        className={`transition-colors duration-200 ${
+                          isFavorite
+                            ? "fill-purple-500 text-purple-500"
+                            : "text-white/50 hover:text-gray-200"
+                        }`}
+                      />
+                    </button>
                   </div>
                 </div>
 

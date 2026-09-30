@@ -2,11 +2,24 @@ import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 
-const navLinks = ["Home", "Programs", "Trainers", "Exercises", "Pricing", "Testimonials"];
+const navLinks = [
+  "Home",
+  "Programs",
+  "Trainers",
+  "Exercises",
+  "Pricing",
+  "Testimonials",
+];
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  
+  
+  const dispatch = useDispatch();
 
   // Close menu on resize to desktop
   useEffect(() => {
@@ -22,10 +35,13 @@ const Navbar = () => {
       {/* Top bar */}
       <section className="fixed top-2 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-1.5rem)] max-w-5xl">
         <div className="flex items-center justify-between gap-4 rounded-xl px-4 sm:px-6 py-2 backdrop-blur-md bg-slate-900/50 border border-white/20 shadow-lg">
-
           {/* Logo */}
           <div className="w-20 sm:w-24 h-14 sm:h-16 flex items-center justify-center shrink-0">
-            <img src={logo} alt="Logo" className="w-full h-full object-contain" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
 
           {/* Desktop links */}
@@ -50,7 +66,9 @@ const Navbar = () => {
 
           {/* Mobile: Login + Hamburger */}
           <div className="flex md:hidden items-center gap-2 shrink-0">
-            <Button variant="primary" className="text-sm px-4 py-1.5">Login</Button>
+            <Button variant="primary" className="text-sm px-4 py-1.5">
+              Login
+            </Button>
             <button
               onClick={() => setMenuOpen((prev) => !prev)}
               aria-label="Toggle menu"
@@ -64,7 +82,9 @@ const Navbar = () => {
         {/* Mobile dropdown panel */}
         <div
           className={`md:hidden mt-2 rounded-xl backdrop-blur-md bg-slate-900/90 border border-white/15 shadow-xl overflow-hidden transition-all duration-300 ease-in-out ${
-            menuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+            menuOpen
+              ? "max-h-[500px] opacity-100"
+              : "max-h-0 opacity-0 pointer-events-none"
           }`}
         >
           <nav className="px-4 py-4">
