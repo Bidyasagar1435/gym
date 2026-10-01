@@ -10,7 +10,8 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { selectExercise } from "@/redux/slices/workoutSlice";
+import { selectExercise, startWorkout } from "@/redux/slices/workoutSlice";
+import ActiveWorkout from "@/components/ActiveWorkout";
 
 const Workout = () => {
   const [loading, setLoading] = useState();
@@ -18,8 +19,16 @@ const Workout = () => {
   const [exercises, setExercises] = useState([]);
 
   const selectExercises = useSelector((state) => state.workout.exercises);
+  const workoutStarted = useSelector((state) => state.workout.workoutStarted);
   const dispatch = useDispatch();
   const totalExercise = selectExercises.length;
+
+  const handleWorkout = () => {
+    if (selectExercises.length === 0) {
+      return;
+    }
+    dispatch(startWorkout());
+  };
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -37,15 +46,17 @@ const Workout = () => {
     fetchExercises();
   }, []);
 
+  if (workoutStarted) {
+    return <ActiveWorkout />;
+  }
+
   return (
     <>
       <main className="relative w-full min-h-screen bg-slate-950 px-4 sm:px-6 md:px-8 py-10 sm:py-12 text-white overflow-hidden">
-        
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-fuchsia-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 mx-auto max-w-6xl">
-          
           <div className="flex justify-between items-center mb-10 sm:mb-12">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-xs font-semibold text-purple-400 mb-4 tracking-wider uppercase">
@@ -65,12 +76,9 @@ const Workout = () => {
               </p>
               <div className="mt-6 h-px w-full bg-gradient-to-r from-purple-500/40 via-slate-800 to-transparent" />
             </div>
-            <div className="bg-slate-900 px-4 py-2 rounded-lg text-white/60 text-md font-semibold border border-purple-500 transition-colors duration-400">
-              <span>Total exercise selected : {totalExercise}</span>
-            </div>
+            
           </div>
 
-          
           {loading && (
             <div className="flex flex-col items-center justify-center py-24 gap-5 text-center">
               <div className="relative w-16 h-16">
@@ -83,7 +91,6 @@ const Workout = () => {
             </div>
           )}
 
-          
           {error && (
             <div className="mx-auto max-w-md my-12 p-6 rounded-2xl border border-red-500/30 bg-red-500/10 text-center shadow-lg backdrop-blur-md">
               <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 text-2xl">
@@ -95,7 +102,6 @@ const Workout = () => {
             </div>
           )}
 
-          
           {!loading && !error && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
               {exercises.map((exercise) => (
@@ -165,10 +171,31 @@ const Workout = () => {
               ))}
             </div>
           )}
-        </div>
-        <div className="w-full border mt-10">
-          <div className="max-w-5xl mx-auto">
-            <h2>hello</h2>
+          <div className="mt-10 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 backdrop-blur-md sm:p-6">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wider text-purple-400">
+                  Workout Ready
+                </p>
+
+                <h2 className="mt-1 text-xl font-bold text-white">
+                  {totalExercise} exercises selected
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-400">
+                  Ready to start your workout?
+                </p>
+              </div>
+
+              <button
+                onClick={handleWorkout}
+                disabled={totalExercise === 0}
+                className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 px-6 py-3 text-sm font-semibold text-white transition hover:from-purple-500 hover:to-fuchsia-500 hover:shadow-lg hover:shadow-purple-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Start Workout
+                <ArrowRight size={18} />
+              </button>
+            </div>
           </div>
         </div>
       </main>
