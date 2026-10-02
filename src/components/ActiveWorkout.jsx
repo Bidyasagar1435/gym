@@ -1,7 +1,13 @@
-import { finishWorkout, nextExercise, prevExercise } from "@/redux/slices/workoutSlice";
+import {
+  completExercise,
+  finishWorkout,
+  nextExercise,
+  prevExercise,
+} from "@/redux/slices/workoutSlice";
 import {
   ArrowLeft,
   ArrowRight,
+  CheckCircle,
   CheckCircle2,
   Clock3,
   Dumbbell,
@@ -11,13 +17,16 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 const ActiveWorkout = () => {
-  const { currentExercise, workoutStarted, exercises } = useSelector(
-    (state) => state.workout,
-  );
+  const { currentExercise, workoutStarted, exercises, completedExercises } =
+    useSelector((state) => state.workout);
   const dispatch = useDispatch();
 
   const exercise = exercises[currentExercise];
+  const isCompleted = completedExercises.some(
+    (item) => item.name === exercise.name,
+  );
   const totalExercises = exercises.length;
+  const isLastExercise = currentExercise === totalExercises - 1;
 
   const progress =
     totalExercises > 0 ? (currentExercise + 1 / totalExercises) * 100 : 0;
@@ -169,23 +178,48 @@ const ActiveWorkout = () => {
             </div>
 
             {/* Controls */}
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <button onClick={()=> dispatch(prevExercise())} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-5 py-3.5 text-sm font-semibold text-slate-300 transition hover:border-purple-500/50 hover:text-white">
+            <div className="flex flex-col justify-evenly items-center gap-3 sm:flex-row">
+              <button
+                onClick={() => dispatch(completExercise())}
+                disabled={isCompleted}
+                className={`mb-3 flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-semibold transition ${
+                  isCompleted
+                    ? "cursor-not-allowed border border-green-500/30 bg-green-500/10 text-green-400"
+                    : "bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-500 hover:to-emerald-500 hover:shadow-lg hover:shadow-green-500/20"
+                }`}
+              >
+                <CheckCircle size={18} />
+                {isCompleted ? "Exercise Completed" : "Mark as Completed"}
+              </button>
+              <button
+                onClick={() => dispatch(prevExercise())}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-5 py-3.5 text-sm font-semibold text-slate-300 transition hover:border-purple-500/50 hover:text-white"
+              >
                 <ArrowLeft size={18} />
                 Previous
               </button>
 
               <button
-                onClick={() => dispatch(nextExercise())}
+                onClick={() => {
+                  if (isLastExercise) {
+                    dispatch(finishWorkout());
+                  } else {
+                    dispatch(nextExercise());
+                  }
+                }}
+                disabled={!isCompleted}
                 className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:from-purple-500 hover:to-fuchsia-500 hover:shadow-lg hover:shadow-purple-500/20"
               >
-                Next Exercise
+                {isLastExercise ? "Finish Workout" : "Next Exercise"}
                 <ArrowRight size={18} />
               </button>
             </div>
 
             {/* Finish */}
-            <button onClick={()=> dispatch(finishWorkout())} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-green-500/30 bg-green-500/10 px-5 py-3 text-sm font-semibold text-green-400 transition hover:bg-green-500/20">
+            <button
+              onClick={() => dispatch(finishWorkout())}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-green-500/30 bg-green-500/10 px-5 py-3 text-sm font-semibold text-green-400 transition hover:bg-green-500/20"
+            >
               <CheckCircle2 size={18} />
               Finish Workout
             </button>
