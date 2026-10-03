@@ -3,6 +3,7 @@ import {
   finishWorkout,
   nextExercise,
   prevExercise,
+  resetWorkout,
 } from "@/redux/slices/workoutSlice";
 import {
   ArrowLeft,
@@ -58,7 +59,7 @@ const ActiveWorkout = () => {
             </h1>
           </div>
 
-          <button className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-purple-500/50 hover:text-white">
+          <button onClick={()=> dispatch(resetWorkout())} className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-purple-500/50 hover:text-white">
             Exit
           </button>
         </div>

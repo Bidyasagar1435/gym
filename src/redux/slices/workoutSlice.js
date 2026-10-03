@@ -9,6 +9,7 @@ const workoutSlice = createSlice({
     workoutStarted: false,
     completedExercises: [],
     workoutFinished: false,
+    resetWorkout: false
   },
   reducers: {
     setWorkout: (state, action) => {
@@ -20,7 +21,7 @@ const workoutSlice = createSlice({
     startWorkout: (state) => {
       state.workoutStarted = true;
       state.currentExercise = 0;
-      state.workoutFinished = false
+      state.workoutFinished = false;
     },
     nextExercise: (state) => {
       if (state.currentExercise < state.exercises.length - 1) {
@@ -45,10 +46,6 @@ const workoutSlice = createSlice({
     },
     finishWorkout: (state) => {
       state.workoutStarted = false;
-      state.currentExercise = 0;
-      state.currentWorkout = null;
-      state.exercises = [];
-      state.completedExercises = [];
       state.workoutFinished = true;
     },
     completExercise: (state) => {
@@ -63,6 +60,14 @@ const workoutSlice = createSlice({
         state.completedExercises.push(exercise);
       }
     },
+    resetWorkout: (state) => {
+      state.currentWorkout = null;
+      state.exercises = [];
+      state.currentExercise = 0;
+      state.workoutStarted = false;
+      state.completedExercises = [];
+      state.workoutFinished = false;
+    },
   },
 });
 
@@ -75,5 +80,6 @@ export const {
   selectExercise,
   finishWorkout,
   completExercise,
+  resetWorkout
 } = workoutSlice.actions;
 export default workoutSlice.reducer;

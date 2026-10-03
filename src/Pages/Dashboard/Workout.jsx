@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { selectExercise, startWorkout } from "@/redux/slices/workoutSlice";
 import ActiveWorkout from "@/components/ActiveWorkout";
+import WorkoutSummary from "@/components/WorkoutSummary";
 
 const Workout = () => {
   const [loading, setLoading] = useState();
@@ -20,6 +21,7 @@ const Workout = () => {
 
   const selectExercises = useSelector((state) => state.workout.exercises);
   const workoutStarted = useSelector((state) => state.workout.workoutStarted);
+  const workoutFinished = useSelector((state) => state.workout.workoutFinished);
   const dispatch = useDispatch();
   const totalExercise = selectExercises.length;
 
@@ -50,6 +52,10 @@ const Workout = () => {
     return <ActiveWorkout />;
   }
 
+  if (workoutFinished) {
+    return <WorkoutSummary />;
+  }
+
   return (
     <>
       <main className="relative w-full min-h-screen bg-slate-950 px-4 sm:px-6 md:px-8 py-10 sm:py-12 text-white overflow-hidden">
@@ -76,7 +82,6 @@ const Workout = () => {
               </p>
               <div className="mt-6 h-px w-full bg-gradient-to-r from-purple-500/40 via-slate-800 to-transparent" />
             </div>
-            
           </div>
 
           {loading && (

@@ -10,6 +10,7 @@ import FavoriteExercise from "./Pages/FavoriteExercise";
 import Login from "./Pages/Login";
 import Workout from "./Pages/Dashboard/Workout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SignUp from "./Pages/SignUp";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/trainers/:slug" element={<TrainerDetails />} />
         <Route path="/favorite-exercises" element={<FavoriteExercise />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route
           path="/dashboard/workout"
           element={
