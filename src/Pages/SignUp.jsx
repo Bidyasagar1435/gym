@@ -1,10 +1,34 @@
+import { login } from "@/redux/slices/userSlice";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!name || !email || !password || !confirmPassword) {
+      alert("Please fill all the fields");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    dispatch(login({ name, email }));
+    navigate("/dashboard/workout");
+  };
 
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-10 text-white flex items-center justify-center">
@@ -33,10 +57,7 @@ const SignUp = () => {
           <div className="pointer-events-none absolute -left-20 -top-20 h-50 w-40 rounded-full bg-linear-to-tl from-purple-900 via-slate-900 to-fuchsia-600 blur-3xl" />
           <div className="pointer-events-none absolute -right-20 -bottom-20 h-50 w-40 rounded-full bg-linear-to-tl from-purple-900 via-slate-900 to-fuchsia-600 blur-3xl" />
 
-          <form
-            className="relative z-10 space-y-5"
-            onSubmit={(e) => e.preventDefault()}
-          >
+          <form className="relative z-10 space-y-5" onSubmit={handleSubmit}>
             {/* Full Name */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">
@@ -45,6 +66,8 @@ const SignUp = () => {
               <input
                 type="text"
                 placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
               />
             </div>
@@ -57,6 +80,8 @@ const SignUp = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
               />
             </div>
@@ -70,6 +95,8 @@ const SignUp = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 pr-11 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-fuchsia-500 focus:ring-1 focus:ring-fuchsia-500"
                 />
                 <button
@@ -126,6 +153,8 @@ const SignUp = () => {
                 <input
                   type={showConfirm ? "text" : "password"}
                   placeholder="Re-enter your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 pr-11 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-fuchsia-500 focus:ring-1 focus:ring-fuchsia-500"
                 />
                 <button

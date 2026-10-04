@@ -1,7 +1,32 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { login } from "@/redux/slices/userSlice";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const isLoggedIn = useSelector((state)=> state.user.isLoggedIn)
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      alert("Please fill all the fields");
+      return;
+    }
+
+    dispatch(login({ email }));
+    navigate("/dashboard/workout");
+  };
+
+  if(isLoggedIn){
+    return <Navigate to="/dashboard/workout" />
+  }
+
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-10 text-white flex items-center justify-center">
       <div className="w-full max-w-md">
@@ -28,7 +53,7 @@ const Login = () => {
           {/* Glow */}
           <div className="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-purple-600/20 blur-3xl" />
 
-          <form className="relative z-10 space-y-5">
+          <form onSubmit={handleSubmit} className="relative z-10 space-y-5">
             {/* Email */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">
@@ -37,7 +62,9 @@ const Login = () => {
 
               <input
                 type="email"
+                value={email}
                 placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
               />
             </div>
@@ -50,6 +77,8 @@ const Login = () => {
 
               <input
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-fuchsia-500 focus:ring-1 focus:ring-fuchsia-500"
               />

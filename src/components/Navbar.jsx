@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, PersonStandingIcon, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const navLinks = [
   "Home",
@@ -17,8 +18,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-  
-  
+
   const dispatch = useDispatch();
 
   // Close menu on resize to desktop
@@ -60,15 +60,36 @@ const Navbar = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-2 shrink-0">
-            <Button variant="primary">Login</Button>
-            <Button variant="outline">Sign Up</Button>
+            {isLoggedIn ? (
+              <div className="rounded-full bg-gray-400 border border-purple-500">
+                <PersonStandingIcon size={20} color={"purple"} />
+              </div>
+            ) : (
+              <Link to="/login">
+                <Button variant="primary" className="text-sm px-4 py-1.5">
+                  Login
+                </Button>
+              </Link>
+            )}
+            <Link to="/sign-up">
+              <Button variant="outline" className="text-sm px-4 py-1.5">
+                Sign Up
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile: Login + Hamburger */}
           <div className="flex md:hidden items-center gap-2 shrink-0">
-            <Button variant="primary" className="text-sm px-4 py-1.5">
-              Login
-            </Button>
+            <Link to="/login">
+              <Button variant="primary" className="text-sm px-4 py-1.5">
+                Login
+              </Button>
+            </Link>
+            <Link to="/sign-up">
+              <Button variant="outline" className="text-sm px-4 py-1.5">
+                Sign Up
+              </Button>
+            </Link>
             <button
               onClick={() => setMenuOpen((prev) => !prev)}
               aria-label="Toggle menu"
@@ -101,13 +122,6 @@ const Navbar = () => {
                 </li>
               ))}
             </ul>
-
-            {/* Mobile Sign Up */}
-            <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-2">
-              <Button variant="outline" className="w-full justify-center">
-                Sign Up
-              </Button>
-            </div>
           </nav>
         </div>
       </section>
